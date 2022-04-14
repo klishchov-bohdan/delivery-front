@@ -22,13 +22,8 @@ export default {
   },
   data() {
     return {
-
     }
   },
-  mounted() {
-    this.$store.commit("suppliers/setSuppliers")
-    this.$store.dispatch('suppliers/fetchSuppliers')
-  }
 }
 </script>
 

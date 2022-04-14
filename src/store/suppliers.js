@@ -2,8 +2,8 @@ const state = {
     url: 'http://localhost:8080/suppliers',
     suppliers: [],
     products: [],
-    minPrice: 0,
-    maxPrice: 0,
+    productDetail: null,
+    basket: [],
     error: '',
     isLoaded: false,
 }
@@ -15,25 +15,33 @@ const mutations = {
     setProducts(state, products) {
         state.products = products
     },
-    setMinPrice(state, min) {
-        state.minPrice = min
-    },
-    setMaxPrice(state, max) {
-        state.maxPrice = max
-    },
-    setProductsInPriceRange(state) {
-        state.products = []
+
+    setProductDetail(state, productId) {
+        state.productDetail = null
         for (let supplier of state.suppliers) {
-            state.products.push(...supplier['menu'])
-        }
-        let productsInRange = []
-        for (let product of state.products) {
-            if (product.price <= state.maxPrice && product.price >= state.minPrice) {
-                productsInRange.push(product)
+            for (let product of supplier["menu"]) {
+                if (productId === product.id) {
+                    state.productDetail = product
+                    break
+                }
             }
         }
-        state.products = productsInRange
     },
+
+    setBasket(state) {
+        state.basket = []
+        let basket = []
+        let productIds = JSON.parse(localStorage.getItem("basket"))
+        for (let supplier of state.suppliers) {
+            for (let product of supplier["menu"]) {
+                if (productIds.includes(product.id)) {
+                    basket.push(product)
+                }
+            }
+        }
+        state.basket = basket
+    },
+
     pushProductsBySupplierId(state, supplierId) {
         let fullMenu = []
         for (let supplier of state.suppliers) {
@@ -83,18 +91,6 @@ const actions = {
                     products.push(product)
                 }
             }
-            let min = products[0].price
-            let max = products[0].price
-            for (let product of products) {
-                if (product.price < min) {
-                    min = product.price
-                }
-                if (product.price > max) {
-                    max = product.price
-                }
-            }
-            context.commit('setMinPrice', min)
-            context.commit('setMaxPrice', max)
             context.commit('setSuppliers', suppliers)
             context.commit('setProducts', products)
         }).catch((err) => {

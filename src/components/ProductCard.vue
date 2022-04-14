@@ -6,13 +6,14 @@
     <span class="tag tag-blue">{{ type }}</span>
     <img :src="image" alt="product_image" class="product_image" width="300px">
     <div class="details">
-      <div class="description">
+      <div class="description" @click="setDetail">
         <h4 class="details_name"><span class="field_tag">Name: </span>{{ name }}</h4>
         <p class="details_desc"><span class="field_tag">Description: </span>{{ description }}</p>
         <p class="details_price"><span class="field_tag">Price: </span>{{ price }}$</p>
         <p class="details_weight"><span class="field_tag">Weight: </span>{{ weight }} g</p>
       </div>
-      <img src="../assets/basket.png" alt="basket_image" class="basket_image" @click="addToStore(id)">
+      <img src="../assets/basket.png" alt="basket_image" class="basket_image" :id="id + 'basket'" @click="addToBasket">
+      <img src="../assets/added.png" alt="added_to_basket_image" class="added_image" :id="id + 'added'">
     </div>
   </div>
 </template>
@@ -51,18 +52,37 @@ export default {
     },
   },
   methods: {
-    addToStore(productId) {
+    addToBasket() {
+      let basketBtn = document.getElementById(this.id + 'basket')
+      let addedImg = document.getElementById(this.id + 'added')
       let basketFromLS = localStorage.getItem('basket')
       if (basketFromLS !== null) {
         let basket = JSON.parse(basketFromLS)
-        basket.push(productId)
-        console.log(basket)
+        basket.push(this.id)
         localStorage.setItem('basket', JSON.stringify(basket))
+        basketBtn.style.display = "none"
+        addedImg.style.display = "block"
       } else {
         let basket = []
-        basket.push(productId)
+        basket.push(this.id)
         console.log(basket)
         localStorage.setItem('basket', JSON.stringify(basket))
+        basketBtn.style.display = "none"
+        addedImg.style.display = "block"
+      }
+    },
+    setDetail() {
+      this.$store.commit("suppliers/setProductDetail", this.id)
+    }
+  },
+  mounted() {
+    let basket = JSON.parse(localStorage.getItem('basket'))
+    let addedImg = document.getElementById(this.id + 'added')
+    let basketBtn = document.getElementById(this.id + 'basket')
+    for (let item of basket) {
+      if (item === this.id) {
+        basketBtn.remove()
+        addedImg.style.display = "block"
       }
     }
   }
@@ -71,6 +91,7 @@ export default {
 
 <style scoped>
 .product_card {
+  border: 1px solid black;
   border-radius: 13px;
   flex-basis: 340px;
   height: 300px;
@@ -86,6 +107,10 @@ export default {
   box-shadow: 8px 8px 10px gray;
   background: #f6f5f7;
   transition: all .2s ease-in-out;
+}
+
+.product_card:hover {
+  cursor: pointer;
 }
 
 .details {
@@ -120,6 +145,7 @@ export default {
 }
 
 .details .basket_image {
+  z-index: 3;
   border-radius: 20px;
   padding: 10px;
   max-width: 70px;
@@ -128,6 +154,18 @@ export default {
   bottom: 5px;
   right: 0;
   transition: all .2s ease-in-out;
+}
+
+.details .added_image {
+  border-radius: 20px;
+  padding: 10px;
+  max-width: 70px;
+  max-height: 70px;
+  position: absolute;
+  bottom: 5px;
+  right: 0;
+  transition: all .2s ease-in-out;
+  display: none
 }
 
 .details .basket_image:hover {
