@@ -1,21 +1,21 @@
 <template>
-  <div class="basket_container">
-    <basket></basket>
+  <div class="orderConfirmation">
+    <orderConfirmation></orderConfirmation>
   </div>
 </template>
 
 <script>
-import Basket from "@/components/Basket";
+import OrderConfirmation from "@/components/OrderConfirmation";
 export default {
-  name: "Basket",
+  name: "OrderConfirmation",
   components: {
-    basket: Basket,
+    orderConfirmation: OrderConfirmation
   }
 }
 </script>
 
 <style scoped>
-.basket_container {
+.orderConfirmation {
   background: #7f7fd5;
   background: linear-gradient(to right, #91eae4, #86a8e7, #7f7fd5);
   position: absolute;

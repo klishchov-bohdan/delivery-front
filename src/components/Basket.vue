@@ -3,10 +3,11 @@
     <div v-if="basketNotEmpty()" class="container">
       <div class="basket_products" v-for="product of $store.state.suppliers.basket" :key="product">
         <productRow
-            :id="product.id"
-            :title="product.name"
-            :price="product.price"
-            :image="product.image"
+            :id="product.item.id"
+            :title="product.item.name"
+            :price="product.item.price"
+            :image="product.item.image"
+            :quantity="product.quantity"
         ></productRow>
       </div>
       <div class="basket_ctr">
@@ -16,14 +17,12 @@
         <div class="totalPrice">
           <h4>Total: {{ totalPrice() }}$</h4>
         </div>
-        <a href="/" class="buy_all">
-          Buy all
-        </a>
+        <router-link class="buy_all" to="/order">Buy all</router-link>
       </div>
     </div>
 
     <div v-else class="empty_basket">
-      <p>basket is empty</p>
+      <h3>basket is empty</h3>
     </div>
   </div>
 </template>
@@ -40,7 +39,7 @@ export default {
     totalPrice() {
       let total = 0
       for (let product of this.$store.state.suppliers.basket) {
-        total += product.price
+        total += product.item.price * product.quantity
       }
       return total
     },
@@ -65,7 +64,6 @@ export default {
 <style scoped>
 .basket {
   width: 70%;
-  background-color: #42b983;
 }
 
 .basket_ctr {
@@ -105,6 +103,7 @@ export default {
   text-decoration: none;
   color: black;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .buy_all:hover {

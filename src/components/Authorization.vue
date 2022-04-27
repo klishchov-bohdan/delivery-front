@@ -1,29 +1,23 @@
 <template>
   <div class="container" id="container">
     <div class="form-container sign-up-container">
-      <form action="#">
+      <form>
         <h1>Create Account</h1>
-        <div class="social-container">
-          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-        </div>
         <span>or use your email for registration</span>
-        <input type="text" placeholder="Name" />
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
-        <button>Sign Up</button>
+        <input id="sign-up-name" type="text" placeholder="Name" />
+        <input id="sign-up-email" type="email" placeholder="Email" />
+        <input id="sign-up-password" type="password" placeholder="Password" />
+        <div class="button" @click="signUp">Sign Up</div>
       </form>
     </div>
     <div class="form-container sign-in-container">
-      <form action="#">
+      <form>
         <h1>Sign in</h1>
-        <div class="social-container">
-          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-        </div>
         <span>or use your account</span>
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
+        <input id="sign-in-email" type="email" placeholder="Email" />
+        <input id="sign-in-password" type="password" placeholder="Password" />
         <a href="#">Forgot your password?</a>
-        <button>Sign In</button>
+        <div class="button" @click="signIn">Sign In</div>
       </form>
     </div>
     <div class="overlay-container">
@@ -31,12 +25,12 @@
         <div class="overlay-panel overlay-left">
           <h1>Welcome Back!</h1>
           <p>To keep connected with us please login with your personal info</p>
-          <button class="ghost" id="signIn" @click="signInOverlay">Sign In</button>
+          <div class="ghost button" id="signIn" @click="signInOverlay">Sign In</div>
         </div>
         <div class="overlay-panel overlay-right">
           <h1>Hello, Friend!</h1>
           <p>Enter your personal details and start journey with us</p>
-          <button class="ghost" id="signUp" @click="signUpOverlay">Sign Up</button>
+          <div class="ghost button" id="signUp" @click="signUpOverlay">Sign Up</div>
         </div>
       </div>
     </div>
@@ -52,6 +46,94 @@ export default {
     },
     signUpOverlay() {
       this.container.classList.add("right-panel-active")
+    },
+    signUp() {
+      let name = document.getElementById('sign-up-name').value;
+      let email = document.getElementById('sign-up-email').value;
+      let emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      let password = document.getElementById('sign-up-password').value;
+      let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+      if (!/^[a-z0-9_\\.]+$/.test(name)) {
+        alert("Username should contains only letters and numbers")
+        return
+      }
+      if (!emailRegex.test(String(email).toLowerCase())) {
+        alert("Email should be looks like example123@mail.com")
+        return;
+      }
+      if (!passwordRegex.test(password)) {
+        alert(`
+          Password is not valid:
+            - should contain at least one digit
+            - should contain at least one lower case
+            - should contain at least one upper case
+            - should contain at least 8 from the mentioned characters
+        `)
+        return;
+      }
+
+      let data = {
+        name: name,
+        email: email,
+        password: password
+      }
+      fetch("http://localhost:8080/registration", {
+        method: "POST",
+        body: JSON.stringify(data)
+      }).then(res => {
+        if(!res.ok) {
+          return res.text().then(text => {
+            alert(text)
+            throw new Error(text)
+          });
+        }
+        else {
+          return res.json();
+        }
+      }).then(json => {
+        localStorage.setItem("tokens", JSON.stringify(json))
+        window.location.replace("http://localhost:8081")
+      }).catch((error) => {
+        console.log(error)
+      });
+    },
+    signIn() {
+      let email = document.getElementById('sign-in-email').value;
+      let emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      let password = document.getElementById('sign-in-password').value;
+      let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+      if (!emailRegex.test(String(email).toLowerCase())) {
+        alert("Invalid email")
+        return;
+      }
+      if (!passwordRegex.test(password)) {
+        alert("Invalid password")
+        return;
+      }
+
+      let data = {
+        email: email,
+        password: password
+      }
+      fetch("http://localhost:8080/login", {
+        method: "POST",
+        body: JSON.stringify(data)
+      }).then(res => {
+        if(!res.ok) {
+          return res.text().then(text => {
+            alert(text)
+            throw new Error(text)
+          });
+        }
+        else {
+          return res.json();
+        }
+      }).then(json => {
+        localStorage.setItem("tokens", JSON.stringify(json))
+        window.location.replace("http://localhost:8081")
+      }).catch((error) => {
+        console.log(error)
+      });
     },
   },
   data() {
@@ -111,7 +193,7 @@ a {
   margin: 15px 0;
 }
 
-button {
+.button {
   border-radius: 20px;
   border: 1px solid #FF4B2B;
   background-color: #FF4B2B;
@@ -124,15 +206,19 @@ button {
   transition: transform 80ms ease-in;
 }
 
-button:active {
+.button:hover {
+  cursor: pointer;
+}
+
+.button:active {
   transform: scale(0.95);
 }
 
-button:focus {
+.button:focus {
   outline: none;
 }
 
-button.ghost {
+.button.ghost {
   background-color: transparent;
   border-color: #FFFFFF;
 }
@@ -276,10 +362,6 @@ input {
 
 .container.right-panel-active .overlay-right {
   transform: translateX(20%);
-}
-
-.social-container {
-  margin: 20px 0;
 }
 
 .social-container a {

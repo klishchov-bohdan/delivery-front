@@ -58,25 +58,44 @@ export default {
   methods: {
     isNotExistsInBasket() {
       let basket = JSON.parse(localStorage.getItem('basket'))
-      return !(basket !== null && basket.includes(this.id));
+      if (basket == null) {
+        return true
+      }
+      for (let item of basket) {
+        if (item.id === this.id) {
+          return false
+        }
+      }
+      return true
     },
     addToBasket() {
-      let basketBtn = document.getElementById(this.id + 'basket')
-      let addedImg = document.getElementById(this.id + 'added')
-      let basketFromLS = localStorage.getItem('basket')
-      if (basketFromLS !== null) {
-        let basket = JSON.parse(basketFromLS)
-        basket.push(this.id)
-        localStorage.setItem('basket', JSON.stringify(basket))
-        basketBtn.style.display = "none"
-        addedImg.style.display = "block"
+      if (this.isNotExistsInBasket()) {
+        let basketBtn = document.getElementById(this.id + 'basket')
+        let addedImg = document.getElementById(this.id + 'added')
+        let basketFromLS = localStorage.getItem('basket')
+        if (basketFromLS !== null) {
+          let basket = JSON.parse(basketFromLS)
+          basket.push({
+            id: this.id,
+            quantity: 1,
+          })
+          localStorage.setItem('basket', JSON.stringify(basket))
+          basketBtn.style.display = "none"
+          addedImg.style.display = "block"
+          alert("Added")
+        } else {
+          let basket = []
+          basket.push({
+            id: this.id,
+            quantity: 1,
+          })
+          localStorage.setItem('basket', JSON.stringify(basket))
+          basketBtn.style.display = "none"
+          addedImg.style.display = "block"
+          alert("Added")
+        }
       } else {
-        let basket = []
-        basket.push(this.id)
-        console.log(basket)
-        localStorage.setItem('basket', JSON.stringify(basket))
-        basketBtn.style.display = "none"
-        addedImg.style.display = "block"
+        alert("Already exists")
       }
     },
   },

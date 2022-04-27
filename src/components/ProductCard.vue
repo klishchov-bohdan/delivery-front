@@ -58,14 +58,19 @@ export default {
       let basketFromLS = localStorage.getItem('basket')
       if (basketFromLS !== null) {
         let basket = JSON.parse(basketFromLS)
-        basket.push(this.id)
+        basket.push({
+          id: this.id,
+          quantity: 1
+        })
         localStorage.setItem('basket', JSON.stringify(basket))
         basketBtn.style.display = "none"
         addedImg.style.display = "block"
       } else {
         let basket = []
-        basket.push(this.id)
-        console.log(basket)
+        basket.push({
+          id: this.id,
+          quantity: 1
+        })
         localStorage.setItem('basket', JSON.stringify(basket))
         basketBtn.style.display = "none"
         addedImg.style.display = "block"
@@ -80,7 +85,7 @@ export default {
     let addedImg = document.getElementById(this.id + 'added')
     let basketBtn = document.getElementById(this.id + 'basket')
     for (let item of basket) {
-      if (item === this.id) {
+      if (item.id === this.id) {
         basketBtn.remove()
         addedImg.style.display = "block"
       }

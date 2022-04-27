@@ -1,26 +1,27 @@
 <template>
  <div class="sorting">
     <supplierList></supplierList>
-    <priceRange></priceRange>
+   <productTypes></productTypes>
  </div>
 </template>
 
 <script>
 import SupplierList from "@/components/SupplierList";
-import PriceRange from "@/components/PriceRange";
+import ProductTypes from "@/components/ProductTypes";
 export default {
   name: "Sorting",
   components: {
     supplierList: SupplierList,
-    priceRange: PriceRange,
+    productTypes: ProductTypes,
   },
 }
 </script>
 
 <style scoped>
 .sorting {
+  margin-top: 20px;
   min-width: 400px;
-  background-color: #7f7fd5;
+  border: 1px solid black;
   height: max-content;
 }
 

@@ -1,6 +1,7 @@
 const state = {
     url: 'http://localhost:8080/suppliers',
     suppliers: [],
+    types: [],
     products: [],
     productDetail: null,
     basket: [],
@@ -14,6 +15,10 @@ const mutations = {
     },
     setProducts(state, products) {
         state.products = products
+    },
+
+    setTypes(state, types) {
+        state.types = types
     },
 
     setProductDetail(state, productId) {
@@ -31,15 +36,56 @@ const mutations = {
     setBasket(state) {
         state.basket = []
         let basket = []
-        let productIds = JSON.parse(localStorage.getItem("basket"))
+        let basketLS = JSON.parse(localStorage.getItem("basket"))
         for (let supplier of state.suppliers) {
             for (let product of supplier["menu"]) {
-                if (productIds.includes(product.id)) {
-                    basket.push(product)
+                for (let item of basketLS) {
+                    if (item.id === product.id) {
+                        basket.push({
+                            item: product,
+                            quantity: item.quantity
+                        })
+                    }
                 }
             }
         }
         state.basket = basket
+    },
+
+    pushProductsByCategory(state, category) {
+        let products = []
+        for (let supplier of state.suppliers) {
+            products.push(...supplier['menu'])
+        }
+        if(state.products.length === products.length) {
+            state.products = []
+        }
+        let filtered = products.filter((value) => {
+            return value.type === category
+        })
+        for (let product of filtered) {
+            if (!state.products.includes(product)) {
+                state.products.push(product)
+            }
+        }
+    },
+
+    deleteProductsByCategory(state, category) {
+        let products = []
+        for (let supplier of state.suppliers) {
+            products.push(...supplier['menu'])
+        }
+        let filtered = products.filter((value) => {
+            return value.type === category
+        })
+        state.products = state.products.filter((value) => {
+            return !filtered.includes(value)
+        })
+        if (state.products.length === 0) {
+            for (let supplier of state.suppliers) {
+                state.products.push(...supplier['menu'])
+            }
+        }
     },
 
     pushProductsBySupplierId(state, supplierId) {
@@ -68,6 +114,11 @@ const mutations = {
                     return !menu.includes(value)
                 })
                 break
+            }
+        }
+        if (state.products.length === 0) {
+            for (let supplier of state.suppliers) {
+                state.products.push(...supplier['menu'])
             }
         }
     },

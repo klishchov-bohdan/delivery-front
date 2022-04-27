@@ -1,21 +1,23 @@
 <template>
-  <div class="basket_container">
-    <basket></basket>
+  <div class="my_orders_container">
+    <myOrders></myOrders>
   </div>
 </template>
 
 <script>
-import Basket from "@/components/Basket";
+
+import MyOrders from "@/components/MyOrders";
+
 export default {
-  name: "Basket",
+  name: "MyOrders",
   components: {
-    basket: Basket,
+    myOrders: MyOrders,
   }
 }
 </script>
 
 <style scoped>
-.basket_container {
+.my_orders_container {
   background: #7f7fd5;
   background: linear-gradient(to right, #91eae4, #86a8e7, #7f7fd5);
   position: absolute;
@@ -25,4 +27,5 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 </style>

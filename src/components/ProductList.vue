@@ -29,6 +29,8 @@ export default {
 
 <style scoped>
   .product_list {
+    background: #7f7fd5;
+    background: linear-gradient(to right, #91eae4, #86a8e7, #7f7fd5);
     display: flex;
     flex-wrap: wrap;
     margin-top: 20px;

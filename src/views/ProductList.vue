@@ -47,13 +47,15 @@ export default {
   position: absolute;
   display: flex;
   justify-content: center;
-  align-items: center;
+  top: 20%;
   width: 100%;
   height: 100%;
   z-index: 0;
 }
 
 .info .product_detail {
+  border-radius: 5px;
+  border: solid 2px black;
   width: 60%;
   height: max-content;
   background-color: #eeeeee;
@@ -68,9 +70,9 @@ export default {
 }
 
 .wrapper {
+  position: absolute;
   width: 90%;
-  background: #7f7fd5;
-  background: linear-gradient(to right, #91eae4, #86a8e7, #7f7fd5);
+  min-height: 100%;
   display: flex;
   justify-content: space-around;
 }
